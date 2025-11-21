@@ -28,7 +28,6 @@ const ProductList = ({ onAddProduct, selectedPriceTypeName }) => {
                         }
                     });
                     const allProducts = response.data?.result || [];
-                    // Filter by type on client side as API might return mixed types
                     const validProducts = allProducts.filter(p =>
                         p.type === 'product' || p.type === 'service'
                     );
@@ -47,7 +46,6 @@ const ProductList = ({ onAddProduct, selectedPriceTypeName }) => {
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery]);
 
-    // No longer needed as we filter during fetch
     const filteredProducts = products;
 
     const getPrice = (product) => {
