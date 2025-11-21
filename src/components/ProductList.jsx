@@ -9,25 +9,35 @@ const ProductList = ({ onAddProduct }) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            setLoading(true);
-            try {
-                const response = await apiClient.get(ENDPOINTS.NOMENCLATURE);
-                setProducts(response.data?.result || []);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            } finally {
-                setLoading(false);
+        const delayDebounceFn = setTimeout(async () => {
+            if (searchQuery.length > 1) {
+                setLoading(true);
+                try {
+                    const response = await apiClient.get(ENDPOINTS.NOMENCLATURE, {
+                        params: { name: searchQuery }
+                    });
+                    const allProducts = response.data?.result || [];
+                    // Filter by type on client side as API might return mixed types
+                    const validProducts = allProducts.filter(p =>
+                        p.type === 'product' || p.type === 'service'
+                    );
+                    setProducts(validProducts);
+                } catch (error) {
+                    console.error('Error searching products:', error);
+                    setProducts([]);
+                } finally {
+                    setLoading(false);
+                }
+            } else {
+                setProducts([]);
             }
-        };
-        fetchProducts();
-    }, []);
+        }, 500);
 
-    const filteredProducts = products.filter(product => {
-        const matchesSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase());
-        const isValidType = product.type === 'product' || product.type === 'service';
-        return matchesSearch && isValidType;
-    });
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery]);
+
+    // No longer needed as we filter during fetch
+    const filteredProducts = products;
 
     if (loading) return <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-secondary)' }}>Загрузка товаров...</div>;
 
