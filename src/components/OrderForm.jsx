@@ -46,11 +46,11 @@ const OrderForm = () => {
             } catch (error) {
                 console.error('Error fetching metadata:', error);
                 const errorDetails = `
-Status: ${error.response?.status || 'N/A'}
-URL: ${error.config?.url || 'N/A'}
-Message: ${error.message || error}
-Response: ${JSON.stringify(error.response?.data || {})}
-                `.trim();
+    Status: ${error.response?.status || 'N/A'}
+    URL: ${error.config?.url || 'N/A'}
+    Message: ${error.message || error}
+    Response: ${JSON.stringify(error.response?.data || {})}
+                    `.trim();
                 alert(`Не удалось загрузить данные формы.\n${errorDetails}`);
             } finally {
                 setLoading(false);
