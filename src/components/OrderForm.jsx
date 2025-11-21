@@ -91,26 +91,39 @@ const OrderForm = () => {
 
         setSubmitting(true);
         try {
-            const payload = {
-                organization_id: selectedOrganization,
-                contragent_id: client.id,
-                warehouse_id: selectedWarehouse,
-                price_type_id: selectedPriceType,
-                paybox_id: selectedPaybox,
-                comment: comment,
-                products: cartItems.map(item => ({
-                    nomenclature_id: item.id,
-                    quantity: item.quantity,
+            const totalSum = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const orderData = {
+                priority: 0,
+                dated: Math.floor(Date.now() / 1000), // Current timestamp in seconds
+                operation: "Заказ",
+                tax_included: true,
+                tax_active: true,
+                goods: cartItems.map(item => ({
                     price: item.price,
-                    sum: item.price * item.quantity
+                    quantity: item.quantity,
+                    unit: item.unit || 116, // Default to 116 (pcs) if missing
+                    discount: 0,
+                    sum_discounted: 0,
+                    nomenclature: item.id
                 })),
-                is_conducted: isConducted
+                settings: {},
+                // loyality_card_id: 0, // Optional, omitted for now as per example
+                warehouse: Number(selectedWarehouse),
+                contragent: client.id,
+                paybox: Number(selectedPaybox),
+                organization: Number(selectedOrganization),
+                status: false,
+                paid_rubles: totalSum,
+                paid_lt: 0
             };
+
+            // API expects an array
+            const payload = [orderData];
 
             await apiClient.post(ENDPOINTS.DOCS_SALES, payload);
             alert(`Заказ ${isConducted ? 'создан и проведен' : 'создан'} успешно!`);
 
-            // Reset form or redirect? For now, just reset cart
             setCartItems([]);
             setComment('');
         } catch (error) {
