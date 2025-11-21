@@ -184,7 +184,10 @@ const OrderForm = () => {
                     required
                 />
 
-                <ProductList onAddProduct={handleAddProduct} />
+                <ProductList
+                    onAddProduct={handleAddProduct}
+                    selectedPriceTypeName={priceTypes.find(pt => pt.id === selectedPriceType)?.name}
+                />
 
                 <SelectField
                     label="Счет"
