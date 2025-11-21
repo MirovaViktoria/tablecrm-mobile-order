@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '../api/client';
 import { ENDPOINTS } from '../api/endpoints';
+import { useToast } from '../context/ToastContext';
 
 const ClientSelect = ({ onSelect }) => {
     const [query, setQuery] = useState('');
@@ -9,6 +10,7 @@ const ClientSelect = ({ onSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef(null);
     const timeoutRef = useRef(null);
+    const { showToast } = useToast();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -60,6 +62,14 @@ const ClientSelect = ({ onSelect }) => {
         setQuery(client.name || client.phone || 'Selected Client');
         setIsOpen(false);
         onSelect(client);
+        showToast(`Клиент ${client.name} выбран`, 'success');
+    };
+
+    const handleClear = () => {
+        setQuery('');
+        setResults([]);
+        onSelect(null);
+        setIsOpen(false);
     };
 
     return (
@@ -73,7 +83,30 @@ const ClientSelect = ({ onSelect }) => {
                     onChange={handleInputChange}
                     placeholder="Поиск по телефону или имени..."
                     onFocus={() => setIsOpen(true)}
+                    style={{ paddingRight: '2.5rem' }}
                 />
+
+                {query && (
+                    <button
+                        onClick={handleClear}
+                        style={{
+                            position: 'absolute',
+                            right: loading ? '60px' : '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontSize: '1.2rem',
+                            padding: '0.25rem',
+                            lineHeight: 1
+                        }}
+                    >
+                        ×
+                    </button>
+                )}
+
                 {loading && (
                     <div style={{
                         position: 'absolute',

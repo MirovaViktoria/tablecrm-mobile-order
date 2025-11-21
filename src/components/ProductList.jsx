@@ -66,14 +66,36 @@ const ProductList = ({ onAddProduct, selectedPriceTypeName }) => {
     return (
         <div className="form-group">
             <label className="label">Товары</label>
-            <input
-                type="text"
-                className="input"
-                placeholder="Поиск товаров..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ marginBottom: '1rem' }}
-            />
+            <div style={{ position: 'relative' }}>
+                <input
+                    type="text"
+                    className="input"
+                    placeholder="Поиск товаров..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{ marginBottom: '1rem', paddingRight: '2.5rem' }}
+                />
+                {searchQuery && (
+                    <button
+                        onClick={() => setSearchQuery('')}
+                        style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '35%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontSize: '1.2rem',
+                            padding: '0.25rem',
+                            lineHeight: 1
+                        }}
+                    >
+                        ×
+                    </button>
+                )}
+            </div>
 
             <div style={{ display: 'grid', gap: '0.75rem', maxHeight: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {filteredProducts.length === 0 ? (
