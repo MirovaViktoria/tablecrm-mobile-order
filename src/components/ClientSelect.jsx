@@ -29,7 +29,7 @@ const ClientSelect = ({ onSelect }) => {
         try {
             const response = await apiClient.get(ENDPOINTS.CONTRAGENTS, {
                 params: {
-                    search: searchQuery
+                    name: searchQuery
                 }
             });
             setResults(response.data?.result || []);
